@@ -1,0 +1,39 @@
+{
+  "name": "Mini SE Workflow",
+  "description": "需求 -> 设计 -> 编码 -> 质量校验，校验失败时回到编码节点修订",
+  "max_revision": 2,
+  "steps": [
+    {
+      "id": "requirements",
+      "name": "需求分析",
+      "type": "agent",
+      "agent": "requirement",
+      "inputs": ["brief"]
+    },
+    {
+      "id": "design",
+      "name": "方案设计",
+      "type": "agent",
+      "agent": "design",
+      "inputs": ["requirements"]
+    },
+    {
+      "id": "coding",
+      "name": "编码实现",
+      "type": "agent",
+      "agent": "coding",
+      "inputs": ["requirements", "design"],
+      "retry": 1
+    },
+    {
+      "id": "validate",
+      "name": "质量校验",
+      "type": "validate",
+      "validator": "python_quality",
+      "on_fail": {
+        "goto": "coding",
+        "max_loops": 2
+      }
+    }
+  ]
+}
